@@ -353,7 +353,7 @@ def generate_textgrid(dict_transcription, output_dir, wav_dir, prefix = [], onse
 
 
 ####
-def generate_csv(tg_dir, output_path, ):
+def generate_csv(tg_dir, output_path):
     """This function generates csv files with transcriptions and onset times from text grid files.
 
     The descriptions of the columns:
