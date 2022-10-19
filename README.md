@@ -83,14 +83,14 @@ NOTE: All the wav files below the input directry will be generated directly in t
 
 ### Generating automatic transcription and onset data (TransCloze.py)
 
-#### Required modules
+#### Requirements
 
 * numpy
 * pandas
 
 * [google-cloud-speech](https://pypi.org/project/google-cloud-speech/) (Only required for `transcribe()`)
 * [praat-textgrids](https://pypi.org/project/praat-textgrids/)
-* [pydub](https://github.com/jiaaro/pydub)
+* [pydub](https://github.com/jiaaro/pydub) (Only required for `stereo2monaural()` and `generate_textgrid()`)
 
 
 
