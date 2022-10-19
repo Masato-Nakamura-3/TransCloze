@@ -301,7 +301,7 @@ def generate_textgrid(dict_transcription, output_dir, wav_dir, prefix = [], onse
         You can include the contextual information in a TextGrid tier to help human inspection through a dictionary with the format of ("1a": "The cop arrested...")
     param6 : inconsistent (optional)
         When the length of audio files are inconsistent, you should set this value as True.
-        
+
     Returns
     -------
     None
@@ -316,8 +316,8 @@ def generate_textgrid(dict_transcription, output_dir, wav_dir, prefix = [], onse
     filenames = [os.path.splitext(i)[0] for i in os.listdir(wav_dir) if (".wav" in i)]
     if len(prefix) > 0:
         filenames = [f for f in filenames if any([p in f for p in prefix])]
-        
-       
+
+
     for k in filenames:
         # Load the TextGrid template and edit it
         tg = textgrids.TextGrid("./temp_note.TextGrid")
@@ -355,7 +355,7 @@ def generate_textgrid(dict_transcription, output_dir, wav_dir, prefix = [], onse
 ####
 def generate_csv(tg_dir, output_path, ):
     """This function generates csv files with transcriptions and onset times from text grid files.
-    
+
     The descriptions of the columns:
     - filenames: The TextGrid file names excluding .TextGrid. (This should be the same as the original wav files.)
     - item_id: The item id (e.g. 10a). This corresponds to the second part of the file names (e.g. exp_10a_dsfd.TextGrid).
@@ -365,14 +365,14 @@ def generate_csv(tg_dir, output_path, ):
     - response: The transcription of the speech. This is the second segment of the "words" tier.
     - rt: The onset of the speech.
     - notes: The content of the "notes"  tier. (This only checks the first segment of the tier.)
-    
+
 
     Parameters
     ----------
     param1 : transcription_dir
         A python dictionary that maps file base names (e.g. "exp_11a_dfsa") onto transcription.
     param2 : output_path
-        A directory to save the csv file.
+        The path to the output csv file.
 
     Returns
     -------
@@ -402,9 +402,9 @@ def generate_csv(tg_dir, output_path, ):
         notes.append(tg["notes"][0].text)
 
     d = pd.DataFrame({"filenames": filenames, "item_id": item_id, "item_num":item_num, "item_con":item_con, "subject_id": subject_id, "response":response, "rt":rt, "notes":notes})
-    d.to_csv("/Users/masato/Box/cloze_experiments/filter/data_pilot/result_pilot.csv", index = False)
+    d.to_csv(output_path, index = False)
 
-        
+
 ### Keyword functions
 def get_keywords(tg_dirs, combine_conditions = False):
     """This function generates a dictionary with keywords from hand-corrected TextGrid files.
@@ -413,7 +413,7 @@ def get_keywords(tg_dirs, combine_conditions = False):
     ----------
     param1 : tg_dirs
         A list of paths to directories with TextGrid files.
-        
+
     param2 : combine_conditions
         Set True if you want to collapse different conditions before generating keywords.
 
@@ -425,15 +425,15 @@ def get_keywords(tg_dirs, combine_conditions = False):
     import textgrids
     import os
     import collections
-    
+
     response_list = dict()
     keyword_set = dict()
     dictkeys = dict()
     filepaths = []
-    
+
     for d in tg_dirs:
         filepaths = filepaths + [os.path.join(d, i) for i in os.listdir(d) if (".TextGrid" in i)]
-        
+
 
     for f in filepaths:
 
@@ -456,7 +456,7 @@ def get_keywords(tg_dirs, combine_conditions = False):
     for k in dictkeys.keys():
         resp_count = collections.Counter(response_list[dictkeys[k]])
         keyword_set[k] = [r for r in resp_count.keys() if resp_count[r] > 1]
-    
+
     return keyword_set
 
 ### Checking after transcription
