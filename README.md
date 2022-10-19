@@ -1,3 +1,7 @@
+**This module is still in prep!**
+
+
+
 # Overview
 
 The TransCloze pipline facilitates automatic processing of speech production data. This pipeline detects the onset of the speech data, and provides machine-based transcriptions. The aim is to speed up the time-consuming processing of the speech data. I recommend you not to completely rely on the automated trascriptions/onsets but check each data by yourself, but it will still significantly facilitate speech data analysis.
@@ -6,14 +10,14 @@ The TransCloze pipline facilitates automatic processing of speech production dat
 
 
 
-This is designed to be especially useful for the online speeded cloze task (or the sentence completion task), or other kinds of data that have some of the following features:
+This is designed to be especially useful for the online speeded cloze task (or the sentence completion task), or other kinds of speech data that have some if not all of the following features:
 
 1. Open-ended but constrained responses
-2. Typically short responses (mostly a single word)
-3. The audio files contain some irrelevant noise
+2. Short speech (mostly a single word)
+3. Contain some irrelevant noise (such as data collected online)
 4. The latencies of responses are valuable data
 
-However, it could be used for processing of other kinds of speech data as well.
+
 
 
 
@@ -31,27 +35,27 @@ The main body of this pipleline is the TransCloze.py module, which takes .wav fi
 
 This pipeline also contains a few supplementary scripts:
 
-1. webm2wav: Transforms PCIbex outputs into wav files
-2. CheckAndEdit: A Praat script to facilitate human inspection of machine-generated onset and transcription
-
-3. 
+1. webm2wav: Transforms PCIbex outputs (.webm files) into wav files
+2. CheckAndEdit: Facilitates human inspection of machine-generated onsets and transcriptions in Praat
 
 
 
 ## Instructions
 
+* This pipeline is built for OSX. This should work for other major OS's but it might need some modification.
+
+* If you have any questons, please contact Masato Nakamura (mnaka@umd.edu).
+
 ### Preperation
 
-Please download the entire folder and place it whereever you want.
+### Installation
 
+Please download the entire folder and place it whereever you want. See paht 
 
+#### Data preperation
 
-#### Data
-
-- Wav of webm files whose names following a specific naming rule. It must contain the trial type, the item ID with one-letter condition code, and the participant ID, each of which separated by underscores (e.g. exp_10a_tdlf.webm). The trial type and the subject ID can be whatever strings that do not contain underscores. The second part indicating the item information ("10a" in the example above) can also be whatever string, but if you want to generate a csv file using this pipeline, it must be a combination of one number (whatever digits will be fine) and one alphabet following it.
-- Optional: If you want to include contextual information in the output Praat files or csv files, you need a python dictionary that maps item information (e.g. "10a") onto the contextual information. (e.g. {"10a": "The dog bit the", "10b": "The man bit the", ...}). Such contextual information can help human inspection/correction of automated transcription.
-
-
+- The wav of webm files must have names following a specific naming rule. It must contain the trial type, the item ID with one-letter condition code, and the participant ID, each of which separated by underscores (e.g. exp_10a_tdlf.webm). The trial type and the subject ID can be whatever strings that do not contain underscores. The second part indicating the item information ("10a" in the example above) can also be whatever string, but if you want to generate a csv file using this pipeline, it must be a combination of one number (however many digits will be fine) and one alphabet following it.
+- Optional: If you want to include some additional information in Praat Text Grid files to aid human inspection or in csv files for analysis, and you can have a python dictionary that maps item information (e.g. "10a") onto the information. (e.g. If you want to show the stimuli/context in the Praat Text Grid files, {"10a": "The dog bit the", "10b": "The man bit the", ...}).
 
 ### Converting webm files to wav files (webm2wav)
 
@@ -59,7 +63,7 @@ If you collected your data online using PCIbex, you will get webm files. However
 
 #### Requirements
 
-- ffmpeg (#####LINK##########)
+- [ffmpeg](https://ffmpeg.org/)
 
 #### Instructions
 
@@ -77,76 +81,43 @@ NOTE: All the wav files below the input directry will be generated directly in t
 
 
 
-### TransCloze.py
+### Generating automatic transcription and onset data (TransCloze.py)
+
+#### Required modules
+
+* numpy
+* pandas
+
+* [google-cloud-speech](https://pypi.org/project/google-cloud-speech/) (Only required for `transcribe()`)
+* [praat-textgrids](https://pypi.org/project/praat-textgrids/)
+* [pydub](https://github.com/jiaaro/pydub)
+
+
+
+#### Functions
 
 This python module contains a set of useful functions for automatic transcription and onset detection.
 
-Here is a list of short descriptions of the functions:
+Here is a list of short descriptions of the functions: 
 
-- 
+- `stereo2monaural()` Convert stereo files to monaural files.
+- `chronset_prep()` Create zip files that can be sent to Chronset for onset detection.
+- `chronset_dict()` Read Chronset outputs and generate a dictionary that maps each file name onto the estimated production onset latency.
+- `transcribe()` Generate transcription of audio files using Google Speech-to-Text API.
+- `generate_textgrid()` Generate TextGrid files from the outputs of `transcribe()`.
+- `generate_csv()` Generate a CSV files from (machine-generated or human-corrected) TextGrid files.
+- `get_keywords()` Get candidate transcriptions from human-corrected TextGrid files. The output dictionary can be used to constrain transcriptions.
 
-
-
-For the detailed use of the TransCloze module, please see Sample.ipynb or Sample.py. You can also use help(TransCloze.NAME_OF_FUNCTION) functions to see the description of each function in the module.
-
-#### Requirements
-
-temp_note.TextGrid: A template of textgrid files used in transcribe.ipynb
-
-
-
-Be careful that Google Cloud Speech-to-Text API is a paid service, and you need to set up your own Google Cloud Platform account to use this pipeline. See the instructions here. I decided to use this pipeline for its accuracy and its feature to constrain the candidates of transcription. Good news is that you can use it for practically free for the first 90 days.
+For the detailed use of the TransCloze module, please see Sample.ipynb. You can also use `help(TransCloze.NAME_OF_FUNCTION)` functions to see the description of each function in the module.
 
 
 
+* Make sure you have temp_note.TextGrid, which is a template required to generate TextGrid files, in the same directory as TransCloze.py.
 
+* Be careful that Google Cloud Speech-to-Text API is a paid service, and you need to set up your own [Google Cloud Platform](https://cloud.google.com/) account to use this pipeline. I decided to use this pipeline for its accuracy and its feature to constrain the candidates of transcription. Good news is that you can use it practically for free for the first 90 days.
 
+### Human inspection of transcriptions and onsets (CheckAndEdit)
 
+Once you have the machine-generated trancriptions and onsets, you would want to correct them by manual inspection. CheckAndEdit facilitates this process by automatically (i) openning a wav file and a TextGrid file together, (ii) and saving the edits you made, and (iii) moving to the next wav & TextGrid file.
 
- (pyに直すか)
-
-
-
-Short description of functions:
-
-
-
-
-
-### CheckAndEdit
-
-Once you have the machine-generated trancriptions and onsets, you would want to correct them by manual inspection. CheckAndEdit facilitates this process by successively???? openning the wav files and TextGrid files together that can be corrected by researchers, and saving the edits.
-
-This Praat script:
-
-1. Opens TextGrid and wav files with the same name and present them together
-2. Saves edits on the TextGrid
-
-Simply enter the path to the wav files and textgrids to the box, and then the corresponding files are opened at once.
-
-Be careful that the script overwrites the TextGrid file once you click on "continue"
-
-
-
-
-
-
-
-Notes:
-
-* This pipeline is built for OSX. This should work for other major OS's but it might need some modification.
-
-
-
-
-
-If you have any questons, please contact Masato Nakamura (mnaka@umd.edu).
-
-
-
-
-
-Chronsetなどの紹介はどこで？
-
-Chronsetのcitation
-
+Simply enter the path to the wav files and textgrids to the box, and then the corresponding files are opened at once. Be careful that the script overwrites the TextGrid file once you click on "continue".

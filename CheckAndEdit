@@ -1,0 +1,58 @@
+## Inspired by Praat script by Kevin Ryan 9/05
+
+form Select directory, file type, and tiers
+	sentence tg_directory /Users/masato/Box/cloze_experiments/filter/batch2/working
+
+	sentence wav_directory /Users/masato/Box/cloze_experiments/filter/batch2/wav
+	sentence Filename_initial_substring_(optional)
+	sentence Tier(s) words
+endform
+
+strings = Create Strings as file list: "list", tg_directory$ + "/" + filename_initial_substring$ + "*.TextGrid"
+
+
+file_count = Get number of strings
+
+
+# Read wavs
+for k from 1 to file_count
+	select Strings list
+    current$ = Get string: k
+    Read from file: tg_directory$ + "/" + current$
+    short$ = selected$ ("TextGrid")
+
+
+
+## Below: look for grid, if found, open it, otherwise make new one
+## This section inspired by code by Jen Hay
+
+    full$ = wav_directory$ + "/" + short$ + ".wav"
+	full_t$ = tg_directory$ + "/" + short$ + ".TextGrid"
+   
+  	Read from file: full$
+  	Rename: short$
+
+	selectObject: "Sound " + short$
+	plusObject: "TextGrid " + short$
+
+	Edit
+	editor: "TextGrid " + short$
+	
+	pause Annotate tiers, then press continue...
+		endeditor
+
+	minusObject: "Sound " + short$
+	Write to text file: full_t$
+
+	select all
+	minusObject: "Strings list"
+	Remove
+
+#	writeInfoLine: file_count - k, " files left"
+
+endfor
+
+select Strings list
+Remove
+clearinfo
+echo Done. 'file_count' files annotated.
