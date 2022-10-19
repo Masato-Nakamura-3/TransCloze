@@ -2,9 +2,7 @@
 
 The TransCloze pipline facilitates automatic processing of speech production data. This pipeline detects the onset of the speech data, and provides machine-based transcriptions. The aim is to speed up the time-consuming processing of the speech data. I recommend you not to completely rely on the automated trascriptions/onsets but check each data by yourself, but it will still significantly facilitate speech data analysis.
 
-
-
-THE AIM IS NOT TO MAGICALLY GENERATE PERFECT TRANSCRIPTIONS etc but a reasonably well starting point that requires minimal work to correct.
+**The aim is not to magically generate perfect transcriptions but to have a reasonably good starting point that requires minimal work to correct!**
 
 
 
