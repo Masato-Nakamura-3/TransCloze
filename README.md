@@ -1,7 +1,3 @@
-**This module is still in prep!**
-
-
-
 # Overview
 
 The TransCloze pipline facilitates automatic processing of speech production data. This pipeline detects the onset of the speech data, and provides machine-based transcriptions. The aim is to speed up the time-consuming processing of the speech data. I recommend you not to completely rely on the automated trascriptions/onsets but check each data by yourself, but it will still significantly facilitate speech data analysis.
