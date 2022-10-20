@@ -46,7 +46,7 @@ This pipeline also contains a few supplementary scripts:
 
 ### Installation
 
-Please download the entire folder and place it whereever you want. See paht 
+Please download the entire folder and place it whereever you want. Make sure to add the path to the TransCloze folder using `sys.path.append(Path_To_TransCloze)` function before importing TransCloze.py.
 
 #### Data preperation
 
