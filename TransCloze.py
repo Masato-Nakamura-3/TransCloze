@@ -459,4 +459,67 @@ def get_keywords(tg_dirs, combine_conditions = False):
 
     return keyword_set
 
+
+
+
+### For PCIbex
+
+def extract_rows(raw_results, keywords):
+    """Extract rows in a PCIbex result file which contains specific keywords, and create a pandas dataframe.
+
+    This requires that the number of columns are the same across all the columns including the keywords.
+    So the keywords should be a name of a PennController trial for example.
+
+    Parameters
+    ----------
+    param1 : raw_results
+        A python list with rows of the PCIbex results file, or a path to it
+    param2 : keywords
+        A python list with key words to be included
+
+    Returns
+    -------
+    output_pd
+        A pandas DataFrame with the rows including keywords, with column names
+    """
+
+    import re
+    import pandas as pd
+
+    # A regular expression to find the rows in the reulst file with the column names
+    # For example: "# 11. Value."
+
+    re_col = '#\s(\d+)\.\s(.+)\.'
+
+    # If raw_results is string, interpret is as a path and read from a file
+    if type(raw_results) == str:
+        with open(raw_results, 'r') as f:
+            raw_results = f.read().splitlines()
+
+    # Set up a dictionary to save the colnames
+    exit_colnames_full = dict()
+
+    for r in raw_results:
+
+        # Get the rows with colum names
+        iscol = re.match(re_col, r)
+
+        if iscol:
+            # Map column ids to column names
+            exit_colnames_full[int(iscol.group(1)) - 1] = iscol.group(2)
+
+            # Save the id of the final column (actually, +1 for range())
+            maxcol = int(iscol.group(1))
+
+        if all([k in r for k in keywords]):
+            # End if a relevant row is found
+            break
+
+    # Delete irrelevant columns
+    exit_colnames = {k:exit_colnames_full[k] for k in range(maxcol)}
+
+
+    output_pd = pd.DataFrame([r.split(",") for r in raw_results if all([k in r for k in keywords])]).rename(columns = exit_colnames)
+
+    return output_pd
 ### Checking after transcription
