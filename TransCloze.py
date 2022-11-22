@@ -189,7 +189,7 @@ def transcribe(wav_dir, cred_path, prefix = [], lang_code = "en-US", keyword = {
     param4 : lang_code (optional)
         Language code for Google Speech-to-Cloud. The default is set to American English.
     param5 : keyword (optional)
-        A dictionary that maps item ID (e.g. "1a" of "exp_1a_xxx.wav") onto a list of candidates.
+        A dictionary that maps item ID (e.g. "1a" of "exp_1a_xxx.wav") onto a list of candidates ({"1a":["eat", "drink"]}). Be careful tht this does not work if an ID is mapped to a single candidate directly.
 
     Returns
     -------
@@ -229,8 +229,8 @@ def transcribe(wav_dir, cred_path, prefix = [], lang_code = "en-US", keyword = {
             content = audio_file.read()
 
         # Load the key words
-        # !!! This part only works with "{}_{item_id}{condition}_{"subject_id"}.wav" format
-        item_id = os.path.splitext(file)[0].split("_")[1]
+        # !!! This part only works with "{}_{item_number}{condition}_{"subject_id"}.wav" format
+        item_id = os.path.splitext(file)[0].split("_")[1] # "item_id" here is actually a combination of item_id and condition
 
         audio = speech.RecognitionAudio(content=content)
 
@@ -312,6 +312,10 @@ def generate_textgrid(dict_transcription, output_dir, wav_dir, prefix = [], onse
     import numpy as np
     from pydub import AudioSegment
 
+    # Get the absolute path to the textgrid template
+    basedir = os.path.dirname(os.path.abspath(__file__))
+    tgpath = os.path.normpath(os.path.join(basedir, "./temp_note.TextGrid"))
+
 
     filenames = [os.path.splitext(i)[0] for i in os.listdir(wav_dir) if (".wav" in i)]
     if len(prefix) > 0:
@@ -320,7 +324,7 @@ def generate_textgrid(dict_transcription, output_dir, wav_dir, prefix = [], onse
 
     for k in filenames:
         # Load the TextGrid template and edit it
-        tg = textgrids.TextGrid("./temp_note.TextGrid")
+        tg = textgrids.TextGrid(tgpath)
 
         # If the duration of the audio files are inconsistent, edit each TextGrid files to match the duration of the audio files
         if inconsistent == True:

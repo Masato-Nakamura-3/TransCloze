@@ -1,9 +1,9 @@
 ## Inspired by Praat script by Kevin Ryan 9/05
 
 form Select directory, file type, and tiers
-	sentence tg_directory /Users/masato/Box/cloze_experiments/filter/batch2/working
+	sentence tg_directory 
 
-	sentence wav_directory /Users/masato/Box/cloze_experiments/filter/batch2/wav
+	sentence wav_directory 
 	sentence Filename_initial_substring_(optional)
 	sentence Tier(s) words
 endform

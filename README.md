@@ -103,6 +103,7 @@ Here is a list of short descriptions of the functions:
 - `generate_textgrid()` Generate TextGrid files from the outputs of `transcribe()`.
 - `generate_csv()` Generate a CSV files from (machine-generated or human-corrected) TextGrid files.
 - `get_keywords()` Get candidate transcriptions from human-corrected TextGrid files. The output dictionary can be used to constrain transcriptions.
+- `extract_rows()` Extract relevant rows including keywords from a PCIbex result file and generate a pandas dataframe with column names.
 
 For the detailed use of the TransCloze module, please see Sample.ipynb. You can also use `help(TransCloze.NAME_OF_FUNCTION)` functions to see the description of each function in the module.
 
