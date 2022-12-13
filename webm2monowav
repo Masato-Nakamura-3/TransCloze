@@ -1,0 +1,14 @@
+#!/bin/bash
+format=".wav"
+output_dir=$2
+
+if [ ${output_dir: -1} != "/" ]
+then
+  echo "no /"
+  output_dir="${output_dir}/"
+fi
+
+for input in $(find $1 -name "*.webm" -not -name "test-recorder.webm")
+do
+  ffmpeg -i $input -ac 1 $output_dir$(basename $input .webm)$format
+done
