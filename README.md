@@ -53,9 +53,11 @@ Please download the entire folder and place it whereever you want. Make sure to 
 - The wav of webm files must have names following a specific naming rule. It must contain the trial type, the item ID with one-letter condition code, and the participant ID, each of which separated by underscores (e.g. exp_10a_tdlf.webm). The trial type and the subject ID can be whatever strings that do not contain underscores. The second part indicating the item information ("10a" in the example above) can also be whatever string, but if you want to generate a csv file using this pipeline, it must be a combination of one number (however many digits will be fine) and one alphabet following it.
 - Optional: If you want to include some additional information in Praat Text Grid files to aid human inspection or in csv files for analysis, and you can have a python dictionary that maps item information (e.g. "10a") onto the information. (e.g. If you want to show the stimuli/context in the Praat Text Grid files, {"10a": "The dog bit the", "10b": "The man bit the", ...}).
 
-### Converting webm files to wav files (webm2wav)
+### Converting webm files to wav files (webm2monowav / webm2wav)
 
-If you collected your data online using PCIbex, you will get webm files. However Praat, Chronest and Google Cloud Speech-to-Text API all don't accept webm files, so you need to convert them into wav files. ffmpeg is a free software that can do this, but it is not straightforward to convert files in different folders, since the output audio files of PCIbex are usually separated by participants. The "webm2wav" file recursively convert all the webm wiles below a certain directory at once.
+If you collected your data online using PCIbex, you will get webm files. However Praat, Chronest and Google Cloud Speech-to-Text API all don't accept webm files, so you need to convert them into wav files. ffmpeg is a free software that can do this, but it is not straightforward to convert files in different folders, since the output audio files of PCIbex are usually separated by participants. The "webm2monowav" file recursively convert all the webm wiles below a certain directory at once.
+
+I recommend using webm2monowav because it not only converts webm files to wav files but also generates monoaural wav files that can be handled by subsequent functions. If you want to retain stereo files, you can use webm2wav instead.
 
 #### Requirements
 
@@ -66,10 +68,10 @@ If you collected your data online using PCIbex, you will get webm files. However
 Enter the following line into your command line substituting the arguments.
 
 ```bash
-bash location_of_webm2wav input_file_directory output_file_directory
+bash location_of_webm2monowav input_file_directory output_file_directory
 ```
 
-- First argument:  the path to "webm2wav" file
+- First argument:  the path to "webm2monowav" file
 - Second argument: the path to the directory which contaions all the webm files
 - Third argument: the path to the output directory
 
@@ -96,7 +98,7 @@ This python module contains a set of useful functions for automatic transcriptio
 
 Here is a list of short descriptions of the functions: 
 
-- `stereo2monaural()` Convert stereo files to monaural files.
+- `stereo2monaural()` Convert stereo files to monaural files. This is not required if you use webm2monowav to convert webm files.
 - `chronset_prep()` Create zip files that can be sent to Chronset for onset detection.
 - `chronset_dict()` Read Chronset outputs and generate a dictionary that maps each file name onto the estimated production onset latency.
 - `transcribe()` Generate transcription of audio files using Google Speech-to-Text API.
