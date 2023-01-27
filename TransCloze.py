@@ -468,7 +468,7 @@ def get_keywords(tg_dirs, combine_conditions = False):
 
 ### For PCIbex
 
-def extract_rows(raw_results, keywords):
+def extract_rows(raw_results, keywords, ignore = []):
     """Extract rows in a PCIbex result file which contains specific keywords, and create a pandas dataframe.
 
     This requires that the number of columns are the same across all the columns including the keywords.
@@ -480,6 +480,10 @@ def extract_rows(raw_results, keywords):
         A python list with rows of the PCIbex results file, or a path to it
     param2 : keywords
         A python list with key words to be included
+    param3 : ignore
+        A python list with columns to be ignored. Sometimes there are columns (e.g. "Label") that have no values in the raw results file.
+        The columns whose names are specified with this argument are ignored.
+
 
     Returns
     -------
@@ -519,11 +523,16 @@ def extract_rows(raw_results, keywords):
             # End if a relevant row is found
             break
 
-    # Delete irrelevant columns
-    exit_colnames = {k:exit_colnames_full[k] for k in range(maxcol)}
-
+    # Sometimes the result file contains blank rows that do not have any values, which results in wrong column name assignments
+    # This part excludes those blank columns
+    new_col = [exit_colnames_full[k] for k in range(maxcol) if exit_colnames_full[k] not in ignore]
+    exit_colnames = dict(zip(range(len(new_col)), new_col))
 
     output_pd = pd.DataFrame([r.split(",") for r in raw_results if all([k in r for k in keywords])]).rename(columns = exit_colnames)
 
+    if (len(output_pd.columns) + len(ignore) < maxcol):
+        print("There might be blank columns in the original raw results data.")
+
     return output_pd
+
 ### Checking after transcription
