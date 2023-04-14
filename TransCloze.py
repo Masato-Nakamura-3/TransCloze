@@ -497,6 +497,7 @@ def extract_rows(raw_results, keywords, ignore = []):
     # A regular expression to find the rows in the reulst file with the column names
     # For example: "# 11. Value."
 
+    flag_found = 0 # 0 if there is no match
     re_col = '#\s(\d+)\.\s(.+)\.'
 
     # If raw_results is string, interpret is as a path and read from a file
@@ -521,17 +522,25 @@ def extract_rows(raw_results, keywords, ignore = []):
 
         if all([k in r for k in keywords]):
             # End if a relevant row is found
+
+            flag_found = 1
             break
 
     # Sometimes the result file contains blank rows that do not have any values, which results in wrong column name assignments
     # This part excludes those blank columns
-    new_col = [exit_colnames_full[k] for k in range(maxcol) if exit_colnames_full[k] not in ignore]
-    exit_colnames = dict(zip(range(len(new_col)), new_col))
 
-    output_pd = pd.DataFrame([r.split(",") for r in raw_results if all([k in r for k in keywords])]).rename(columns = exit_colnames)
+    if flag_found == 1:
+        new_col = [exit_colnames_full[k] for k in range(maxcol) if exit_colnames_full[k] not in ignore]
+        exit_colnames = dict(zip(range(len(new_col)), new_col))
 
-    if (len(output_pd.columns) + len(ignore) < maxcol):
-        print("There might be blank columns in the original raw results data.")
+        output_pd = pd.DataFrame([r.split(",") for r in raw_results if all([k in r for k in keywords])]).rename(columns = exit_colnames)
+
+        if (len(output_pd.columns) + len(ignore) < maxcol):
+            print("There might be blank columns in the original raw results data.")
+
+    else:
+        print("There was no row including the keywords.")
+        output_pd = pd.DataFrame()
 
     return output_pd
 
